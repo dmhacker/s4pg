@@ -36,7 +36,7 @@ func ReadShares(fpaths []string) ([]Share, error) {
 
 func WritePlaintext(pt Plaintext, fdir string) error {
 	fpath := filepath.Join(fdir, pt.Filename)
-	if _, err := os.Stat(fpath); os.IsExist(err) {
+	if _, err := os.Stat(fpath); !os.IsNotExist(err) {
 		return fmt.Errorf("'%s' already exists; will not overwrite", fpath)
 	}
 	err := ioutil.WriteFile(fpath, pt.Content, 0644)
@@ -55,7 +55,7 @@ func WriteShares(shares []Share, fpath string) error {
 	spaths := make([]string, len(rawShares))
 	for i, rawShare := range rawShares {
 		spaths[i] = fpath + "." + strconv.Itoa(i+1) + ".s4pg"
-		if _, err := os.Stat(spaths[i]); os.IsExist(err) {
+		if _, err := os.Stat(spaths[i]); !os.IsNotExist(err) {
 			return fmt.Errorf("'%s' already exists; will not overwrite", spaths[i])
 		}
 		err = ioutil.WriteFile(spaths[i], rawShare, 0644)
