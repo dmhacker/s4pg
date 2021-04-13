@@ -11,10 +11,12 @@ func RunSplit(inputPath string, count int, threshold int) error {
 	if err != nil {
 		return err
 	}
+	defer Shred(pt.Content)
 	rawPt, err := EncodePlaintext(pt)
 	if err != nil {
 		return err
 	}
+	defer Shred(rawPt)
 	password, err := ReadPassword("Password: ")
 	if err != nil {
 		return err
@@ -65,10 +67,12 @@ func RunCombine(inputPaths []string) error {
 	if err != nil {
 		return err
 	}
+	defer Shred(rawPt)
 	pt, err := DecodePlaintext(rawPt)
 	if err != nil {
 		return err
 	}
+	defer Shred(pt.Content)
 	return WritePlaintext(pt, ".")
 
 }

@@ -13,7 +13,7 @@ import (
 
 const (
 	PBKDF2SaltLength = 8
-	PBKDF2Iterations = 10000
+	PBKDF2Iterations = 500000
 )
 
 func ReadPassword(message string) ([]byte, error) {
