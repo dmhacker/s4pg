@@ -24,14 +24,14 @@ func (suite *PlaintextSuite) TestSharesThresholdSmall() {
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 5, 3)
 	require.Nil(suite.T(), err)
-    for i := 0; i < 2; i++ {
-        raw2, err := s4pg.CombineShares(shares[i:(i + 3)])
-        require.Nil(suite.T(), err)
-        require.NotNil(suite.T(), raw2)
-        plaintext, err := s4pg.DecodePlaintext(raw2)
-        require.Nil(suite.T(), err)
-        assert.Equal(suite.T(), suite.Small, plaintext)
-    }
+	for i := 0; i < 2; i++ {
+		raw2, err := s4pg.CombineShares(shares[i:(i + 3)])
+		require.Nil(suite.T(), err)
+		require.NotNil(suite.T(), raw2)
+		plaintext, err := s4pg.DecodePlaintext(raw2)
+		require.Nil(suite.T(), err)
+		assert.Equal(suite.T(), suite.Small, plaintext)
+	}
 }
 
 func (suite *PlaintextSuite) TestSharesFailSmall() {
@@ -39,10 +39,10 @@ func (suite *PlaintextSuite) TestSharesFailSmall() {
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 5, 3)
 	require.Nil(suite.T(), err)
-    for i := 0; i < 3; i++ {
-        _, err = s4pg.CombineShares(shares[i:(i + 2)])
-        require.Error(suite.T(), err)
-    }
+	for i := 0; i < 3; i++ {
+		_, err = s4pg.CombineShares(shares[i:(i + 2)])
+		require.Error(suite.T(), err)
+	}
 }
 
 func (suite *PlaintextSuite) TestSharesThresholdLarge() {
@@ -50,7 +50,7 @@ func (suite *PlaintextSuite) TestSharesThresholdLarge() {
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 100, 67)
 	require.Nil(suite.T(), err)
-    raw2, err := s4pg.CombineShares(shares[25:92])
+	raw2, err := s4pg.CombineShares(shares[25:92])
 	require.Nil(suite.T(), err)
 	require.NotNil(suite.T(), raw2)
 	plaintext, err := s4pg.DecodePlaintext(raw2)
@@ -63,6 +63,6 @@ func (suite *PlaintextSuite) TestSharesFailLarge() {
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 100, 67)
 	require.Nil(suite.T(), err)
-    _, err = s4pg.CombineShares(shares[25:91])
+	_, err = s4pg.CombineShares(shares[25:91])
 	require.Error(suite.T(), err)
 }
