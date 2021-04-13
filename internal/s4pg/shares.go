@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/chacha20poly1305"
 )
 
-func SplitShares(raw []byte, count int, threshold int) ([][]byte, error) {
+func SplitShares(raw []byte, count int, threshold int) ([]Share, error) {
 	// Generate secret key securely
 	skey := make([]byte, chacha20poly1305.KeySize)
 	_, err := rand.Read(skey)
@@ -33,33 +33,25 @@ func SplitShares(raw []byte, count int, threshold int) ([][]byte, error) {
 		return nil, err
 	}
 	// Encode full shares as byte slices
-	shares := make([][]byte, len(skeyShares))
-	for i, skeyShare := range shares {
-		share, err := EncodeShare(Share{
+	shares := make([]Share, len(skeyShares))
+	for i, skeyShare := range skeyShares {
+		shares[i] = Share{
 			Content:  content,
 			KeyShare: skeyShare,
 			Nonce:    nonce,
-		})
-		if err != nil {
-			return nil, err
 		}
-		shares[i] = share
 	}
 	return shares, nil
 }
 
-func CombineShares(rawShares [][]byte) ([]byte, error) {
+func CombineShares(rawShares []Share) ([]byte, error) {
 	if len(rawShares) == 0 {
 		return nil, fmt.Errorf("no shares provided")
 	}
 	var content []byte
 	var nonce []byte
 	skeyShares := make([][]byte, len(rawShares))
-	for i, rawShare := range rawShares {
-		share, err := DecodeShare(rawShare)
-		if err != nil {
-			return nil, err
-		}
+	for i, share := range rawShares {
 		if i == 0 {
 			content = share.Content
 			nonce = share.Nonce

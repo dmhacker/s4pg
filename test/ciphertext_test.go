@@ -8,13 +8,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func (suite *PlaintextSuite) TestPasswordSuccessSmall() {
+func (suite *PlaintextSuite) TestCiphertextSuccessSmall() {
 	raw, err := s4pg.EncodePlaintext(suite.Small)
 	require.Nil(suite.T(), err)
-	ciphertext, err := s4pg.EncryptPlaintext(raw, []byte("password"))
+	ct, err := s4pg.EncryptPlaintext(raw, []byte("password"))
 	require.Nil(suite.T(), err)
-	require.NotNil(suite.T(), ciphertext)
-	raw2, err := s4pg.DecryptCiphertext(ciphertext, []byte("password"))
+	raw2, err := s4pg.DecryptCiphertext(ct, []byte("password"))
 	require.Nil(suite.T(), err)
 	require.NotNil(suite.T(), raw2)
 	plaintext, err := s4pg.DecodePlaintext(raw2)
@@ -22,16 +21,15 @@ func (suite *PlaintextSuite) TestPasswordSuccessSmall() {
 	assert.Equal(suite.T(), suite.Small, plaintext)
 }
 
-func (suite *PlaintextSuite) TestPasswordSuccessLarge() {
+func (suite *PlaintextSuite) TestCiphertextSuccessLarge() {
 	password := make([]byte, 1024)
 	_, err := rand.Read(password)
 	require.Nil(suite.T(), err)
 	raw, err := s4pg.EncodePlaintext(suite.Large)
 	require.Nil(suite.T(), err)
-	ciphertext, err := s4pg.EncryptPlaintext(raw, password)
+	ct, err := s4pg.EncryptPlaintext(raw, password)
 	require.Nil(suite.T(), err)
-	require.NotNil(suite.T(), ciphertext)
-	raw2, err := s4pg.DecryptCiphertext(ciphertext, password)
+	raw2, err := s4pg.DecryptCiphertext(ct, password)
 	require.Nil(suite.T(), err)
 	require.NotNil(suite.T(), raw2)
 	plaintext, err := s4pg.DecodePlaintext(raw2)
@@ -39,13 +37,12 @@ func (suite *PlaintextSuite) TestPasswordSuccessLarge() {
 	assert.Equal(suite.T(), suite.Large, plaintext)
 }
 
-func (suite *PlaintextSuite) TestPasswordFailSmall() {
+func (suite *PlaintextSuite) TestCiphertextFailSmall() {
 	raw, err := s4pg.EncodePlaintext(suite.Small)
 	require.Nil(suite.T(), err)
-	ciphertext, err := s4pg.EncryptPlaintext(raw, []byte("password1"))
+	ct, err := s4pg.EncryptPlaintext(raw, []byte("password1"))
 	require.Nil(suite.T(), err)
-	require.NotNil(suite.T(), ciphertext)
-	raw2, err := s4pg.DecryptCiphertext(ciphertext, []byte("password2"))
+	raw2, err := s4pg.DecryptCiphertext(ct, []byte("password2"))
 	require.Error(suite.T(), err)
 	require.Nil(suite.T(), raw2)
 }
