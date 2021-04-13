@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func (suite *PlaintextSuite) TestSharesAllSmall() {
+func (suite *PlaintextSuite) TestSmallSharesSplitCombineAll() {
 	raw, err := s4pg.EncodePlaintext(suite.Small)
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 5, 3)
@@ -19,7 +19,7 @@ func (suite *PlaintextSuite) TestSharesAllSmall() {
 	assert.Equal(suite.T(), suite.Small, plaintext)
 }
 
-func (suite *PlaintextSuite) TestSharesThresholdSmall() {
+func (suite *PlaintextSuite) TestSmallSharesSplitCombineThreshold() {
 	raw, err := s4pg.EncodePlaintext(suite.Small)
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 5, 3)
@@ -34,7 +34,7 @@ func (suite *PlaintextSuite) TestSharesThresholdSmall() {
 	}
 }
 
-func (suite *PlaintextSuite) TestSharesFailSmall() {
+func (suite *PlaintextSuite) TestSmallSharesSplitCombineFail() {
 	raw, err := s4pg.EncodePlaintext(suite.Small)
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 5, 3)
@@ -45,7 +45,7 @@ func (suite *PlaintextSuite) TestSharesFailSmall() {
 	}
 }
 
-func (suite *PlaintextSuite) TestSharesThresholdLarge() {
+func (suite *PlaintextSuite) TestLargeSharesSplitCombineThreshold() {
 	raw, err := s4pg.EncodePlaintext(suite.Large)
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 100, 67)
@@ -58,7 +58,7 @@ func (suite *PlaintextSuite) TestSharesThresholdLarge() {
 	assert.Equal(suite.T(), suite.Large, plaintext)
 }
 
-func (suite *PlaintextSuite) TestSharesFailLarge() {
+func (suite *PlaintextSuite) TestLargeSharesSplitCombineFail() {
 	raw, err := s4pg.EncodePlaintext(suite.Large)
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 100, 67)

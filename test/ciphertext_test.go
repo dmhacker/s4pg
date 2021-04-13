@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func (suite *PlaintextSuite) TestCiphertextSuccessSmall() {
+func (suite *PlaintextSuite) TestSmallCiphertextEncryptDecryptSuccess() {
 	raw, err := s4pg.EncodePlaintext(suite.Small)
 	require.Nil(suite.T(), err)
 	ct, err := s4pg.EncryptCiphertext(raw, []byte("password"))
@@ -21,7 +21,7 @@ func (suite *PlaintextSuite) TestCiphertextSuccessSmall() {
 	assert.Equal(suite.T(), suite.Small, plaintext)
 }
 
-func (suite *PlaintextSuite) TestCiphertextSuccessLarge() {
+func (suite *PlaintextSuite) TestLargeCiphertextEncryptDecryptSuccess() {
 	password := make([]byte, 1024)
 	_, err := rand.Read(password)
 	require.Nil(suite.T(), err)
@@ -37,7 +37,7 @@ func (suite *PlaintextSuite) TestCiphertextSuccessLarge() {
 	assert.Equal(suite.T(), suite.Large, plaintext)
 }
 
-func (suite *PlaintextSuite) TestCiphertextFailSmall() {
+func (suite *PlaintextSuite) TestSmallCiphertextEncryptDecryptFail() {
 	raw, err := s4pg.EncodePlaintext(suite.Small)
 	require.Nil(suite.T(), err)
 	ct, err := s4pg.EncryptCiphertext(raw, []byte("password1"))
