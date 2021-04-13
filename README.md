@@ -1,5 +1,7 @@
 # s4pg
 
+[![Build Status](https://travis-ci.com/dmhacker/s4pg.svg?branch=main)](https://travis-ci.com/dmhacker/s4pg)
+
 s4pg stands for "shamir's secret sharing scheme privacy guard". While there
 exist other CLI tools that perform SSSS in some capacity, s4pg was designed
 to be just as simple but ultimately more comprehensive than these tools. With only 
@@ -12,7 +14,7 @@ two subcommands and minimal flags, s4pg provides the following features:
 All cryptographic primitives are handled through either 
 [hashicorp/vault](https://pkg.go.dev/github.com/hashicorp/vault) 
 or [golang/crypto](https://pkg.go.dev/golang.org/x/crypto). That being said, please vet this
-source code before using in a high-risk situation.
+source code before using it in a high-risk situation.
 
 ## Setup
 
