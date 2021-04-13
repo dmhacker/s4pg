@@ -42,7 +42,6 @@ func (suite *PlaintextSuite) TestCiphertextFailSmall() {
 	require.Nil(suite.T(), err)
 	ct, err := s4pg.EncryptPlaintext(raw, []byte("password1"))
 	require.Nil(suite.T(), err)
-	raw2, err := s4pg.DecryptCiphertext(ct, []byte("password2"))
+	_, err = s4pg.DecryptCiphertext(ct, []byte("password2"))
 	require.Error(suite.T(), err)
-	require.Nil(suite.T(), raw2)
 }
