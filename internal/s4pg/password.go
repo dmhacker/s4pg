@@ -1,10 +1,8 @@
 package s4pg
 
 import (
-	"bytes"
 	"crypto/rand"
 	"crypto/sha256"
-	"encoding/gob"
 	"fmt"
 	"syscall"
 
@@ -18,25 +16,16 @@ const (
 	PBKDF2Iterations = 10000
 )
 
-func PasswordRead(message string) ([]byte, error) {
+func ReadPassword(message string) ([]byte, error) {
 	fmt.Print(message)
 	password, err := terminal.ReadPassword(int(syscall.Stdin))
 	return password, err
 }
 
-func PasswordEncrypt(password []byte, ocontent *OriginalContent) (*PasswordContent, error) {
-	// Encode original content struct into bytes
-	writer := new(bytes.Buffer)
-	encoder := gob.NewEncoder(writer)
-	err := encoder.Encode(ocontent)
-	if err != nil {
-		return nil, err
-	}
-	raw := writer.Bytes()
-	defer Shred(raw)
+func EncryptPlaintext(data []byte, password []byte) ([]byte, error) {
 	// Create cipher from password
 	salt := make([]byte, PBKDF2SaltLength)
-	_, err = rand.Read(salt)
+	_, err := rand.Read(salt)
 	if err != nil {
 		return nil, err
 	}
@@ -51,34 +40,27 @@ func PasswordEncrypt(password []byte, ocontent *OriginalContent) (*PasswordConte
 	if err != nil {
 		return nil, err
 	}
-	content := cipher.Seal(nil, nonce, raw, nil)
-	return &PasswordContent{
+	content := cipher.Seal(nil, nonce, data, nil)
+	// Encode ciphertext into byte slice
+	return EncodeCiphertext(Ciphertext{
 		Content: content,
 		Salt:    salt,
 		Nonce:   nonce,
-	}, nil
+	})
 }
 
-func PasswordDecrypt(password []byte, pcontent *PasswordContent) (*OriginalContent, error) {
+func DecryptCiphertext(data []byte, password []byte) ([]byte, error) {
+	// Decode byte slice into ciphertext
+	ciphertext, err := DecodeCiphertext(data)
+	if err != nil {
+		return nil, err
+	}
 	// Create cipher from password
-	pkey := pbkdf2.Key(password, pcontent.Salt, PBKDF2Iterations, chacha20poly1305.KeySize, sha256.New)
+	pkey := pbkdf2.Key(password, ciphertext.Salt, PBKDF2Iterations, chacha20poly1305.KeySize, sha256.New)
 	cipher, err := chacha20poly1305.New(pkey)
 	if err != nil {
 		return nil, err
 	}
 	// Use cipher to decrypt all of the encrypted content
-	raw, err := cipher.Open(nil, pcontent.Nonce, pcontent.Content, nil)
-	if err != nil {
-		return nil, err
-	}
-    defer Shred(raw)
-	// Decode raw data into original content struct
-	var original OriginalContent
-	reader := bytes.NewBuffer(raw)
-	decoder := gob.NewDecoder(reader)
-	err = decoder.Decode(&original)
-	if err != nil {
-		return nil, err
-	}
-	return &original, nil
+	return cipher.Open(nil, ciphertext.Nonce, ciphertext.Content, nil)
 }
