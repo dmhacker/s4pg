@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/dmhacker/s4pg/internal/s4pg"
 	"github.com/spf13/cobra"
 )
 
 var (
-    parts int
-    threshold int
-	rootCmd     = &cobra.Command{
+	count     int
+	threshold int
+	rootCmd   = &cobra.Command{
 		Use:   "s4pg",
 		Short: "Shamir's secret sharing scheme privacy guard",
 		Long: `s4pg functions similarily to the ssss program, providing a way
@@ -39,11 +40,15 @@ the original secret and writes it to a file.`,
 )
 
 func runSplit(cmd *cobra.Command, args []string) {
-    // TODO: Implement
+	if err := s4pg.RunSplit(args[0], count, threshold); err != nil {
+		er(err)
+	}
 }
 
 func runCombine(cmd *cobra.Command, args []string) {
-    // TODO: Implement
+	if err := s4pg.RunCombine(args, "."); err != nil {
+		er(err)
+	}
 }
 
 func er(err error) {
@@ -53,7 +58,7 @@ func er(err error) {
 
 func main() {
 	splitCmd.Flags().IntVarP(&threshold, "threshold", "t", 3, "Minimum shares needed for reconstruction")
-	splitCmd.Flags().IntVarP(&parts, "number", "n", 5, "Number of shares to be produced")
+	splitCmd.Flags().IntVarP(&count, "number", "n", 5, "Number of shares to be produced")
 
 	rootCmd.AddCommand(splitCmd)
 	rootCmd.AddCommand(combineCmd)

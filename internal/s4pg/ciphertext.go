@@ -22,7 +22,7 @@ func ReadPassword(message string) ([]byte, error) {
 	return password, err
 }
 
-func EncryptPlaintext(raw []byte, password []byte) (Ciphertext, error) {
+func EncryptCiphertext(raw []byte, password []byte) (Ciphertext, error) {
 	var ct Ciphertext
 	// Create cipher from password
 	ct.Salt = make([]byte, PBKDF2SaltLength)
