@@ -13,8 +13,14 @@ two subcommands and minimal flags, s4pg provides the following features:
 
 All cryptographic primitives are handled through either 
 [hashicorp/vault](https://pkg.go.dev/github.com/hashicorp/vault) 
-or [golang/crypto](https://pkg.go.dev/golang.org/x/crypto). That being said, please vet this
-source code before using it in a high-risk situation.
+or [golang/crypto](https://pkg.go.dev/golang.org/x/crypto). Sensitive information
+appearing in memory such as passwords & keys are either kept encrypted or
+locked into main memory and are wiped after use; this is accomplished through
+use of [awnumar/memguard](https://github.com/awnumar/memguard).
+
+As a disclaimer, please vet this source code before using it in a high-risk situation.
+Do not use it in a production environment unless you are absolutely certain that the code works.
+A testing suite is provided to check some critical sections.
 
 ## Setup
 
