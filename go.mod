@@ -3,6 +3,7 @@ module github.com/dmhacker/s4pg
 go 1.16
 
 require (
+	github.com/awnumar/memguard v0.22.2
 	github.com/hashicorp/vault v1.7.0
 	github.com/spf13/cobra v1.1.3
 	github.com/stretchr/testify v1.6.1

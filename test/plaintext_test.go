@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"testing"
 
+	"github.com/awnumar/memguard"
 	"github.com/dmhacker/s4pg/internal/s4pg"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -30,5 +31,7 @@ func (suite *PlaintextSuite) SetupSuite() {
 }
 
 func TestPlaintextSuite(t *testing.T) {
+	memguard.CatchInterrupt()
+	defer memguard.Purge()
 	suite.Run(t, new(PlaintextSuite))
 }

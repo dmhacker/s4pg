@@ -3,25 +3,16 @@ package s4pg
 import (
 	"crypto/rand"
 	"crypto/sha256"
-	"fmt"
-	"syscall"
 
+	"github.com/awnumar/memguard"
 	"golang.org/x/crypto/chacha20poly1305"
 	"golang.org/x/crypto/pbkdf2"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 const (
 	PBKDF2SaltLength = 8
 	PBKDF2Iterations = 500000
 )
-
-func ReadPassword(message string) ([]byte, error) {
-	fmt.Print(message)
-	password, err := terminal.ReadPassword(int(syscall.Stdin))
-	fmt.Print("\n")
-	return password, err
-}
 
 func EncryptCiphertext(raw []byte, password []byte) (Ciphertext, error) {
 	var ct Ciphertext
@@ -31,9 +22,13 @@ func EncryptCiphertext(raw []byte, password []byte) (Ciphertext, error) {
 	if err != nil {
 		return ct, err
 	}
-	pkey := pbkdf2.Key(password, ct.Salt, PBKDF2Iterations, chacha20poly1305.KeySize, sha256.New)
-	defer Shred(pkey)
-	cipher, err := chacha20poly1305.New(pkey)
+	pkeyEnclave := memguard.NewEnclave(pbkdf2.Key(password, ct.Salt, PBKDF2Iterations, chacha20poly1305.KeySize, sha256.New))
+	pkey, err := pkeyEnclave.Open()
+	if err != nil {
+		return ct, err
+	}
+	defer pkey.Destroy()
+	cipher, err := chacha20poly1305.New(pkey.Bytes())
 	if err != nil {
 		return ct, err
 	}
@@ -49,9 +44,13 @@ func EncryptCiphertext(raw []byte, password []byte) (Ciphertext, error) {
 
 func DecryptCiphertext(ct Ciphertext, password []byte) ([]byte, error) {
 	// Create cipher from password
-	pkey := pbkdf2.Key(password, ct.Salt, PBKDF2Iterations, chacha20poly1305.KeySize, sha256.New)
-	defer Shred(pkey)
-	cipher, err := chacha20poly1305.New(pkey)
+	pkeyEnclave := memguard.NewEnclave(pbkdf2.Key(password, ct.Salt, PBKDF2Iterations, chacha20poly1305.KeySize, sha256.New))
+	pkey, err := pkeyEnclave.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer pkey.Destroy()
+	cipher, err := chacha20poly1305.New(pkey.Bytes())
 	if err != nil {
 		return nil, err
 	}

@@ -6,7 +6,21 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"syscall"
+
+	"github.com/awnumar/memguard"
+	"golang.org/x/crypto/ssh/terminal"
 )
+
+func ReadPassword(message string) (*memguard.Enclave, error) {
+	fmt.Print(message)
+	password, err := terminal.ReadPassword(int(syscall.Stdin))
+	fmt.Print("\n")
+    if err != nil {
+        return nil, err
+    }
+	return memguard.NewEnclave(password), nil
+}
 
 func ReadPlaintext(fpath string) (Plaintext, error) {
 	var pt Plaintext

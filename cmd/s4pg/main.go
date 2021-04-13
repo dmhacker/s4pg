@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/awnumar/memguard"
 	"github.com/dmhacker/s4pg/internal/s4pg"
 	"github.com/spf13/cobra"
 )
@@ -40,20 +41,24 @@ the original secret and writes it to a file.`,
 )
 
 func runSplit(cmd *cobra.Command, args []string) {
-	if err := s4pg.RunSplit(args[0], count, threshold); err != nil {
+	memguard.CatchInterrupt()
+	defer memguard.Purge()
+	if err := s4pg.SplitPlaintextFile(args[0], count, threshold); err != nil {
 		er(err)
 	}
 }
 
 func runCombine(cmd *cobra.Command, args []string) {
-	if err := s4pg.RunCombine(args); err != nil {
+	memguard.CatchInterrupt()
+	defer memguard.Purge()
+	if err := s4pg.CombineShareFiles(args); err != nil {
 		er(err)
 	}
 }
 
 func er(err error) {
 	fmt.Fprintln(os.Stderr, err)
-	os.Exit(1)
+	memguard.SafeExit(1)
 }
 
 func main() {

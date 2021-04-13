@@ -4,31 +4,32 @@ import (
 	"crypto/rand"
 	"fmt"
 
+	"github.com/awnumar/memguard"
 	"github.com/hashicorp/vault/shamir"
 	"golang.org/x/crypto/chacha20poly1305"
 )
 
 func SplitShares(raw []byte, count int, threshold int) ([]Share, error) {
 	// Generate secret key securely
-	skey := make([]byte, chacha20poly1305.KeySize)
-	_, err := rand.Read(skey)
+	skeyEnclave := memguard.NewEnclaveRandom(chacha20poly1305.KeySize)
+	skey, err := skeyEnclave.Open()
 	if err != nil {
 		return nil, err
 	}
-	defer Shred(skey)
+	defer skey.Destroy()
 	// Encrypt content using secret key
 	nonce := make([]byte, chacha20poly1305.NonceSize)
 	_, err = rand.Read(nonce)
 	if err != nil {
 		return nil, err
 	}
-	cipher, err := chacha20poly1305.New(skey)
+	cipher, err := chacha20poly1305.New(skey.Bytes())
 	if err != nil {
 		return nil, err
 	}
 	content := cipher.Seal(nil, nonce, raw, nil)
 	// Split secret key using SSSS
-	skeyShares, err := shamir.Split(skey, count, threshold)
+	skeyShares, err := shamir.Split(skey.Bytes(), count, threshold)
 	if err != nil {
 		return nil, err
 	}
@@ -58,12 +59,17 @@ func CombineShares(rawShares []Share) ([]byte, error) {
 		}
 		skeyShares[i] = share.KeyShare
 	}
-	skey, err := shamir.Combine(skeyShares)
+	skeyRaw, err := shamir.Combine(skeyShares)
 	if err != nil {
 		return nil, err
 	}
-	defer Shred(skey)
-	cipher, err := chacha20poly1305.New(skey)
+	skeyEnclave := memguard.NewEnclave(skeyRaw)
+	skey, err := skeyEnclave.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer skey.Destroy()
+	cipher, err := chacha20poly1305.New(skey.Bytes())
 	if err != nil {
 		return nil, err
 	}
