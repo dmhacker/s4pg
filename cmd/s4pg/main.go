@@ -46,7 +46,7 @@ func runSplit(cmd *cobra.Command, args []string) {
 }
 
 func runCombine(cmd *cobra.Command, args []string) {
-	if err := s4pg.RunCombine(args, "."); err != nil {
+	if err := s4pg.RunCombine(args); err != nil {
 		er(err)
 	}
 }

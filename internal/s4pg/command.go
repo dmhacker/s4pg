@@ -2,6 +2,7 @@ package s4pg
 
 import (
 	"fmt"
+	"path/filepath"
 	"reflect"
 )
 
@@ -39,10 +40,10 @@ func RunSplit(inputPath string, count int, threshold int) error {
 	if err != nil {
 		return err
 	}
-	return WriteShares(shares, inputPath)
+	return WriteShares(shares, filepath.Base(inputPath))
 }
 
-func RunCombine(inputPaths []string, outputDir string) error {
+func RunCombine(inputPaths []string) error {
 	shares, err := ReadShares(inputPaths)
 	if err != nil {
 		return err
@@ -68,6 +69,6 @@ func RunCombine(inputPaths []string, outputDir string) error {
 	if err != nil {
 		return err
 	}
-	return WritePlaintext(pt, outputDir)
+	return WritePlaintext(pt, ".")
 
 }
