@@ -8,7 +8,7 @@ import (
 )
 
 var (
-    count int
+    parts int
     threshold int
 	rootCmd     = &cobra.Command{
 		Use:   "s4pg",
@@ -53,7 +53,7 @@ func er(err error) {
 
 func main() {
 	splitCmd.Flags().IntVarP(&threshold, "threshold", "t", 3, "Minimum shares needed for reconstruction")
-	splitCmd.Flags().IntVarP(&count, "number", "n", 5, "Number of shares to be produced")
+	splitCmd.Flags().IntVarP(&parts, "number", "n", 5, "Number of shares to be produced")
 
 	rootCmd.AddCommand(splitCmd)
 	rootCmd.AddCommand(combineCmd)
