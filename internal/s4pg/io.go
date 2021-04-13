@@ -43,7 +43,7 @@ func WritePlaintext(pt Plaintext, fdir string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Recreated original file: %v\n", fpath)
+	fmt.Printf("File '%s' has been recreated.\n", fpath)
 	return nil
 }
 
@@ -63,6 +63,6 @@ func WriteShares(shares []Share, fpath string) error {
 			return err
 		}
 	}
-	fmt.Printf("Created share files: %v\n", spaths)
+	fmt.Printf("Share files '%v' have been generated.\n", spaths)
 	return nil
 }
