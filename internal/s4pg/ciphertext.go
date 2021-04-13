@@ -19,6 +19,7 @@ const (
 func ReadPassword(message string) ([]byte, error) {
 	fmt.Print(message)
 	password, err := terminal.ReadPassword(int(syscall.Stdin))
+	fmt.Print("\n")
 	return password, err
 }
 
