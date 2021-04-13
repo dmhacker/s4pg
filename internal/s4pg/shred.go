@@ -7,8 +7,8 @@ import (
 func Shred(sensitive []byte) {
 	for i := 0; i < 5; i++ {
 		rand.Read(sensitive)
-        for j := range sensitive {
-            sensitive[j] = byte(i)
-        }
+		for j := range sensitive {
+			sensitive[j] = byte(i)
+		}
 	}
 }
