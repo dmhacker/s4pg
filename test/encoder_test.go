@@ -26,9 +26,11 @@ func (suite *PlaintextSuite) TestLargePlaintextEncodeDecodeSuccess() {
 
 func (suite *PlaintextSuite) TestLargeCiphertextEncodeDecodeSuccess() {
 	oct := s4pg.Ciphertext{
-		Content: make([]byte, 10000),
-		Salt:    make([]byte, 8),
-		Nonce:   make([]byte, 32),
+		Content:    make([]byte, 10000),
+		Salt:       make([]byte, 8),
+		Nonce:      make([]byte, 32),
+		CipherType: s4pg.CIPHER_CHACHA20_POLY1305,
+		KDFType:    s4pg.KDF_PBKDF2_SHA256_I500000,
 	}
 	_, err := rand.Read(oct.Content)
 	require.Nil(suite.T(), err)
@@ -45,9 +47,10 @@ func (suite *PlaintextSuite) TestLargeCiphertextEncodeDecodeSuccess() {
 
 func (suite *PlaintextSuite) TestLargeShareEncodeDecodeSuccess() {
 	oshare := s4pg.Share{
-		Content:  make([]byte, 10000),
-		KeyShare: make([]byte, 32),
-		Nonce:    make([]byte, 32),
+		Content:    make([]byte, 10000),
+		KeyShare:   make([]byte, 32),
+		Nonce:      make([]byte, 32),
+		CipherType: s4pg.CIPHER_CHACHA20_POLY1305,
 	}
 	_, err := rand.Read(oshare.Content)
 	require.Nil(suite.T(), err)
@@ -66,9 +69,10 @@ func (suite *PlaintextSuite) TestLargeSharesEncodeDecodeSuccess() {
 	oshares := make([]s4pg.Share, 7)
 	for i := 0; i < 7; i++ {
 		oshare := s4pg.Share{
-			Content:  make([]byte, 10000),
-			KeyShare: make([]byte, 32),
-			Nonce:    make([]byte, 32),
+			Content:    make([]byte, 10000),
+			KeyShare:   make([]byte, 32),
+			Nonce:      make([]byte, 32),
+			CipherType: s4pg.CIPHER_CHACHA20_POLY1305,
 		}
 		_, err := rand.Read(oshare.Content)
 		require.Nil(suite.T(), err)

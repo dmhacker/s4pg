@@ -11,6 +11,9 @@ func (suite *PlaintextSuite) TestSmallSharesSplitCombineAll() {
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 5, 3)
 	require.Nil(suite.T(), err)
+    for i := 0; i < 5; i++ {
+        assert.Equal(suite.T(), shares[i].CipherType, s4pg.CIPHER_CHACHA20_POLY1305)
+    }
 	raw2, err := s4pg.CombineShares(shares)
 	require.Nil(suite.T(), err)
 	require.NotNil(suite.T(), raw2)
@@ -24,6 +27,9 @@ func (suite *PlaintextSuite) TestSmallSharesSplitCombineThreshold() {
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 5, 3)
 	require.Nil(suite.T(), err)
+    for i := 0; i < 5; i++ {
+        assert.Equal(suite.T(), shares[i].CipherType, s4pg.CIPHER_CHACHA20_POLY1305)
+    }
 	for i := 0; i < 2; i++ {
 		raw2, err := s4pg.CombineShares(shares[i:(i + 3)])
 		require.Nil(suite.T(), err)
@@ -39,6 +45,9 @@ func (suite *PlaintextSuite) TestSmallSharesSplitCombineFail() {
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 5, 3)
 	require.Nil(suite.T(), err)
+    for i := 0; i < 5; i++ {
+        assert.Equal(suite.T(), shares[i].CipherType, s4pg.CIPHER_CHACHA20_POLY1305)
+    }
 	for i := 0; i < 3; i++ {
 		_, err = s4pg.CombineShares(shares[i:(i + 2)])
 		require.Error(suite.T(), err)
@@ -50,6 +59,9 @@ func (suite *PlaintextSuite) TestLargeSharesSplitCombineThreshold() {
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 100, 67)
 	require.Nil(suite.T(), err)
+    for i := 0; i < 100; i++ {
+        assert.Equal(suite.T(), shares[i].CipherType, s4pg.CIPHER_CHACHA20_POLY1305)
+    }
 	raw2, err := s4pg.CombineShares(shares[25:92])
 	require.Nil(suite.T(), err)
 	require.NotNil(suite.T(), raw2)
@@ -63,6 +75,9 @@ func (suite *PlaintextSuite) TestLargeSharesSplitCombineFail() {
 	require.Nil(suite.T(), err)
 	shares, err := s4pg.SplitShares(raw, 100, 67)
 	require.Nil(suite.T(), err)
+    for i := 0; i < 100; i++ {
+        assert.Equal(suite.T(), shares[i].CipherType, s4pg.CIPHER_CHACHA20_POLY1305)
+    }
 	_, err = s4pg.CombineShares(shares[25:91])
 	require.Error(suite.T(), err)
 }

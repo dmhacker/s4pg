@@ -37,9 +37,10 @@ func SplitShares(raw []byte, count int, threshold int) ([]Share, error) {
 	shares := make([]Share, len(skeyShares))
 	for i, skeyShare := range skeyShares {
 		shares[i] = Share{
-			Content:  content,
-			KeyShare: skeyShare,
-			Nonce:    nonce,
+			CipherType: CIPHER_CHACHA20_POLY1305,
+			Content:    content,
+			KeyShare:   skeyShare,
+			Nonce:      nonce,
 		}
 	}
 	return shares, nil
@@ -47,15 +48,17 @@ func SplitShares(raw []byte, count int, threshold int) ([]Share, error) {
 
 func CombineShares(rawShares []Share) ([]byte, error) {
 	if len(rawShares) == 0 {
-		return nil, fmt.Errorf("no shares provided")
+		return nil, fmt.Errorf("no shares specified")
 	}
 	var content []byte
 	var nonce []byte
+	var cipherType CipherType
 	skeyShares := make([][]byte, len(rawShares))
 	for i, share := range rawShares {
 		if i == 0 {
 			content = share.Content
 			nonce = share.Nonce
+			cipherType = share.CipherType
 		}
 		skeyShares[i] = share.KeyShare
 	}
@@ -69,9 +72,13 @@ func CombineShares(rawShares []Share) ([]byte, error) {
 		return nil, err
 	}
 	defer skey.Destroy()
-	cipher, err := chacha20poly1305.New(skey.Bytes())
-	if err != nil {
-		return nil, err
+	switch cipherType {
+	case CIPHER_CHACHA20_POLY1305:
+		cipher, err := chacha20poly1305.New(skey.Bytes())
+		if err != nil {
+			return nil, err
+		}
+		return cipher.Open(nil, nonce, content, nil)
 	}
-	return cipher.Open(nil, nonce, content, nil)
+	return nil, fmt.Errorf("unknown cipher specified")
 }
