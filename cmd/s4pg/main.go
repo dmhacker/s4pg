@@ -12,6 +12,7 @@ import (
 var (
 	count     int
 	threshold int
+	version   = "v1.0.4"
 	rootCmd   = &cobra.Command{
 		Use:   "s4pg",
 		Short: "Shamir's secret sharing scheme privacy guard",
@@ -38,6 +39,12 @@ protected secret, and then, using a user-supplied password, decrypts that into
 the original secret and writes it to a file.`,
 		Run: runCombine,
 	}
+	versionCmd = &cobra.Command{
+		Use:   "version",
+		Short: "Displays the current version of this software",
+		Long:  `Displays the current version of this software.`,
+		Run:   runVersion,
+	}
 )
 
 func runSplit(cmd *cobra.Command, args []string) {
@@ -56,6 +63,10 @@ func runCombine(cmd *cobra.Command, args []string) {
 	}
 }
 
+func runVersion(cmd *cobra.Command, args []string) {
+	fmt.Println(version)
+}
+
 func er(err error) {
 	fmt.Fprintln(os.Stderr, err)
 	memguard.SafeExit(1)
@@ -67,6 +78,7 @@ func main() {
 
 	rootCmd.AddCommand(splitCmd)
 	rootCmd.AddCommand(combineCmd)
+	rootCmd.AddCommand(versionCmd)
 
 	rootCmd.Execute()
 }
