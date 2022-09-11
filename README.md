@@ -1,7 +1,5 @@
 # s4pg
 
-[![Build Status](https://travis-ci.com/dmhacker/s4pg.svg?branch=main)](https://travis-ci.com/dmhacker/s4pg)
-
 s4pg stands for "shamir's secret sharing scheme privacy guard". While there
 exist other CLI tools that perform SSSS in some capacity, s4pg was designed
 to be just as simple but ultimately more comprehensive than these tools. With only 
